@@ -80,36 +80,46 @@ public class BlackJack extends HttpServlet {
         out.print("ディーラーのカードは"+dealer.myCards.toString()+","
                 +"合計は"+dealer.open()+"です。"+"<br>"+"<br>");
         
-        if(user.open()>=22 && dealer.open()<22)
-        out.print("Ｕｓｅｒ’ｓ　ＢＵＲＳＴ！！"+"  "+"残念(´;ω;｀)　あなたの負けです。");
         
-        else if (dealer.open()>=22 && user.open()<22)
-        out.print("Ｄｅａｌｅｒ’ｓ　ＢＵＲＳＴ！！"+"  "+"ヤッターヾ(≧▽≦)ﾉ　　あなたの勝ちです。");
         
-        else if (user.open() == 21&& dealer.open()!=21)
-        out.print("☆Ｕｓｅｒ’ｓ ＢＬＡＣＫ　ＪＡＣＫ☆"+"  "+"ヤッターヾ(≧▽≦)ﾉ　　あなたの勝ちです！");
-        
+        if (user.open() == 21 && (dealer.open() == 21))
+        out.print("☆Ｄｏｕｂｌｅ ＢＬＡＣＫ　ＪＡＣＫ☆"+"<br>"+"ＤＲＡＷ"); 
+                
         else if (user.open() == 21 && dealer.open()>=22)
         out.print("☆Ｕｓｅｒ’ｓ ＢＬＡＣＫ　ＪＡＣＫ☆"+"Ｄｅａｌｅｒ’ｓ　ＢＵＲＳＴ！！"
                 +"  "+"ヤッターヾ(≧▽≦)ﾉ　　あなたの勝ちです！");
         
-        else if (dealer.open() == 21&& user.open() != 21)
-        out.print("Ｄｅａｌｅｒ’ｓ ＢＬＡＣＫ　ＪＡＣＫ"+"  "+"残念(´;ω;｀)あなたの負けです！"); 
+        else if (user.open() == 21&& dealer.open()<21)
+        out.print("☆Ｕｓｅｒ’ｓ ＢＬＡＣＫ　ＪＡＣＫ☆"+"  "+"ヤッターヾ(≧▽≦)ﾉ　　あなたの勝ちです！");
+                        
+        else if (dealer.open() == 21 && user.open()>=22)
+        out.print("☆Ｄｅａｌｅｒ’ｓ ＢＬＡＣＫ　ＪＡＣＫ☆"+"Ｕｓｅｒ’ｓ　ＢＵＲＳＴ！！"
+                +"  "+"残念(´;ω;｀)あなたの負けです。。。");
         
-        else if (user.open() > dealer.open()&&user.open()<22&&dealer.open()<22)
+        else if (dealer.open() == 21&& user.open()<21)
+        out.print("☆Ｄｅａｌｅｒ’ｓ ＢＬＡＣＫ　ＪＡＣＫ☆"+"  "+"残念(´;ω;｀)あなたの負けです。。。");
+        
+        else if(user.open()>=22 && dealer.open()<21)
+        out.print("Ｕｓｅｒ’ｓ　ＢＵＲＳＴ！！"+"  "+"残念(´;ω;｀)　あなたの負けです。。。");
+        
+        else if (user.open()>=22 && dealer.open()>=22)
+        out.print("Double Burst"+"  "+"ＤＲＡＷ");
+        
+        else if (dealer.open()>=22 && user.open()<21)
+        out.print("Ｄｅａｌｅｒ’ｓ　ＢＵＲＳＴ！！"+"  "+"ヤッターヾ(≧▽≦)ﾉ　　あなたの勝ちです。");
+        
+        else if (user.open() > dealer.open()&&user.open()<21&&dealer.open()<21)
         out.print("ヤッターヾ(≧▽≦)ﾉ　　あなたの勝ちです！");
                     
-        else if (user.open() < dealer.open()&&user.open()<22&&dealer.open()<22)    
-        out.print("残念(´;ω;｀)　　あなたの負けです。");
+        else if (user.open() < dealer.open()&&user.open()<21&&dealer.open()<21)    
+        out.print("残念(´;ω;｀)　　あなたの負けです。。。");
         
         else if (user.open() == dealer.open())    
         out.print("ＤＲＡＷ");
         
-        else if (user.open() == 21 && (dealer.open() == 21))
-        out.print("ＤＲＡＷ"); 
         
-        else if (user.open()>=22 && dealer.open()>=22)
-        out.print("Double Burst"+"  "+"ＤＲＡＷ"); 
+        
+        
         
         out.println("</h1>");
             
