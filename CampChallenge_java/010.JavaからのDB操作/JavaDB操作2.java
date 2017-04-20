@@ -35,7 +35,10 @@ public class JavaDB操作2 extends HttpServlet {
         PrintWriter out = response.getWriter(); 
         
         Connection c1 = null;
-           
+        
+        /* 下記に全く関係ないメモ☆
+            transaction という機能を使うと、実効制限がかけられる
+        */
         
         try{
             
@@ -55,6 +58,8 @@ public class JavaDB操作2 extends HttpServlet {
             out.print("新しく入力されました。"+drs.getString("name")+"<br>");
         }
         
+        drs.close();
+        
         //まとめて入力
         String sql2 = "insert into profiles value (2,'鈴木 茂','090-1122-3344',37,'1987-08-12')";
         int num2 = stmt.executeUpdate(sql2);
@@ -64,6 +69,21 @@ public class JavaDB操作2 extends HttpServlet {
         while(rset.next()){
             out.print(rset.getString(1)+rset.getString(2)+"<br>");
         }
+        rset.close();
+        
+        
+        // ?を使ってまとめて入力。
+        PreparedStatement ps = null;  
+        String sql10 = "INSERT INTO profiles values (?, ?, ?, ?, ?)";
+        ps = c1.prepareStatement(sql10);
+        ps.setInt(1,5);
+        ps.setString(2,"高橋清");
+        ps.setString(3,"090-9900-1234");
+        ps.setInt(4, 24);
+        ps.setString(5, "2000-12-24");
+        
+        int num10 = ps.executeUpdate(); //insertを実行する。
+        
         
         //新しいテーブルを作り、重複しているデータを削除して、元のテーブルと入れ替える。
         String sql3 = "CREATE TABLE temp_table as SELECT * FROM profiles GROUP BY profilesid, name";
@@ -77,8 +97,8 @@ public class JavaDB操作2 extends HttpServlet {
         
        
                 
-        rset.close();
-        drs.close();
+        
+        
         c1.close();
         
         }catch (Exception all){
