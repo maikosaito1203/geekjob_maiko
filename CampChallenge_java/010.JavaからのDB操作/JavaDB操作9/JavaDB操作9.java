@@ -50,8 +50,8 @@ public class JavaDB操作9 extends HttpServlet {
             String name = request.getParameter("name");
             String tell = request.getParameter("tell");
             String age = request.getParameter("age");
-            String birthday = request.getParameter("birthday");
-            
+            String birthday = request.getParameter("year")+request.getParameter("month")+request.getParameter("day");
+            //birthday はselectで複数値が取れるので足し算。
                        
             ps1 = db9.prepareStatement("insert into profiles (name, tell, age, birthday) values (?, ?, ?, ?)");
             ps1.setString(1, name);
