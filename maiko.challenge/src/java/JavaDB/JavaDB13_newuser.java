@@ -3,25 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mypackage.sample;
+package JavaDB;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.sql.*;
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
 
-import java.util.Date;
-import java.util.Random;
-import javax.servlet.RequestDispatcher;
-import org.mypackage.sample.ResultData;
 /**
  *
  * @author maiko
  */
-public class FortuneTelling extends HttpServlet {
+public class JavaDB13_newuser extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,37 +29,54 @@ public class FortuneTelling extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        
         PrintWriter out = response.getWriter();
         
-        final String result = "/WEB-INF/jsp/FortuneTellingResult.jsp";
+        Connection db13 = null;
+        PreparedStatement ps1 = null;
+        ResultSet rs1 = null;
         
-        String lucklist[]={"大吉","中吉","小吉","吉","半吉","末小吉","凶","小凶","半凶","末凶","大凶"};
-        Random rand = new Random();
-        Integer index = rand.nextInt(lucklist.length);
-        
-        ResultData data = new ResultData();
-        data.setD(new Date());
-        data.setLuck(lucklist[index]);
-        request.setAttribute("DATA", data);
-        
-        RequestDispatcher rd = request.getRequestDispatcher(result);
-        rd.forward(request, response);
-        
-        
-        try{
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet FortuneTelling</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>"+"今日の運勢は。。。 " + lucklist[index]+"</h1>");
-            out.println("</body>");
-            out.println("</html>");
-          }finally{
-            out.close();
-     
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            db13 = DriverManager.getConnection("jdbc:mysql://localhost:3306/Challenge_db", "maiko.saito", "muginoumi");
+            
+            String id = request.getParameter("userid");
+            String pass = request.getParameter("password");
+            
+            ps1 = db13.prepareStatement("insert into zaikouser (userid, password) values (?,?)");
+            ps1.setString(1, id);
+            ps1.setString(2,pass);
+            ps1.executeUpdate();
+            
+            ps1 = db13.prepareStatement("select * from zaikouser where userid = ?");
+            ps1.setString(1,id);
+            rs1 = ps1.executeQuery();
+            
+            while(rs1.next()){
+                out.print("下記登録されました。"+"<br>"+"ユーザーID："+rs1.getString("userid")+"<br>"+"パスワード；"
+                        +rs1.getString("password")+"<br>"+"<br>");
+                out.print("<a href='/maiko.challenge/javaDB/JavaDB13-userstart.jsp'>ログイン画面へ</a>");
+                
+                
+            }
+            rs1.close();
+            ps1.close();
+            db13.close();
+            
+        } catch(SQLException sql){
+            out.print("SQL ERROR"+sql.toString());            
+        } catch(Exception e){
+            out.print("ERROR"+e.toString());
+        }finally{
+            if(rs1 != null){
+                try{
+                    db13.close();
+                }catch(Exception e2){
+                    out.print("ERROR 2"+e2.toString());
+                }
+            }
         }
     }
 

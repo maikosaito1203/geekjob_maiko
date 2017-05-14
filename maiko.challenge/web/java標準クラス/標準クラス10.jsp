@@ -35,7 +35,7 @@
                 final int num4=10;
 
                 out.print(num1++ - 2+"<br>" );//0
-            logger.log(Level.INFO, "一つ目終了");
+            logger.log(Level.INFO, new Date() + "一つ目終了");
                 out.print(num2-- + 5+"<br>");//8
             logger.log(Level.INFO, "二つ目終了");    
                 out.print(--num3-2+"<br>");//2

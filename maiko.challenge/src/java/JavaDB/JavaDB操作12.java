@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mypackage.sample;
+package JavaDB;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,17 +11,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.sql.*;
 
-
-import java.util.Date;
-import java.util.Random;
-import javax.servlet.RequestDispatcher;
-import org.mypackage.sample.ResultData;
 /**
  *
  * @author maiko
  */
-public class FortuneTelling extends HttpServlet {
+public class JavaDB操作12 extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,37 +31,57 @@ public class FortuneTelling extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        
         PrintWriter out = response.getWriter();
         
-        final String result = "/WEB-INF/jsp/FortuneTellingResult.jsp";
-        
-        String lucklist[]={"大吉","中吉","小吉","吉","半吉","末小吉","凶","小凶","半凶","末凶","大凶"};
-        Random rand = new Random();
-        Integer index = rand.nextInt(lucklist.length);
-        
-        ResultData data = new ResultData();
-        data.setD(new Date());
-        data.setLuck(lucklist[index]);
-        request.setAttribute("DATA", data);
-        
-        RequestDispatcher rd = request.getRequestDispatcher(result);
-        rd.forward(request, response);
+        Connection db12 = null;
+        PreparedStatement ps1 = null;
+        ResultSet rs1 = null;
         
         
         try{
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet FortuneTelling</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>"+"今日の運勢は。。。 " + lucklist[index]+"</h1>");
-            out.println("</body>");
-            out.println("</html>");
-          }finally{
-            out.close();
-     
+           Class.forName("com.mysql.jdbc.Driver").newInstance();
+           db12 = DriverManager.getConnection("jdbc:mysql://localhost:3306/Challenge_db", "maiko.saito", "muginoumi");
+           
+           String name = request.getParameter("name");
+           String age = request.getParameter("age");
+           String birth = request.getParameter("year")+request.getParameter("month")+request.getParameter("day");
+           
+           ps1 = db12.prepareStatement("select * from profiles where name like ? and age like ? and birthday like ?");
+           // %% *パーセントの間に何もいれないと、「全て」の意味になる！
+           
+           ps1.setString(1, "%"+name+"%");
+           ps1.setString(2, "%"+age+"%"); //int型とstring型で検索条件が変わる！
+           ps1.setString(3, "%"+birth+"%");
+           
+           
+           
+           rs1 = ps1.executeQuery();
+           while (rs1.next()){
+                out.print("検索結果"+"<br>"+"ID："+rs1.getString("profilesid")+",  "+"名前："+rs1.getString("name")+",  "
+                +"電話番号："+rs1.getString("tell")+",  "+"年齢："+rs1.getString("age")+",  "
+                +"生年月日"+rs1.getString("birthday")+"<br>");
+            }
+           
+           rs1.close();
+           ps1.close();
+           db12.close();
+           
+            
+        }catch (SQLException sql){
+            out.print("SQL ERROR"+ sql.toString());
+        }catch (Exception e){
+            out.print("EROOR"+ e.toString());
+        }finally{
+            if(rs1 != null){
+                try {
+                    db12.close();
+                }catch(Exception e2){
+                    out.print("e2 ERROR"+ e2.getMessage());
+                }
+            }
         }
     }
 

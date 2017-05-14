@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mypackage.sample;
+package object;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,16 +12,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.mypackage.sample.object_class_1_3; //サーブレットにクラスを継承
 
-import java.util.Date;
-import java.util.Random;
-import javax.servlet.RequestDispatcher;
-import org.mypackage.sample.ResultData;
+
 /**
  *
  * @author maiko
  */
-public class FortuneTelling extends HttpServlet {
+public class object_1_3_test extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,37 +33,15 @@ public class FortuneTelling extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        
-        final String result = "/WEB-INF/jsp/FortuneTellingResult.jsp";
-        
-        String lucklist[]={"大吉","中吉","小吉","吉","半吉","末小吉","凶","小凶","半凶","末凶","大凶"};
-        Random rand = new Random();
-        Integer index = rand.nextInt(lucklist.length);
-        
-        ResultData data = new ResultData();
-        data.setD(new Date());
-        data.setLuck(lucklist[index]);
-        request.setAttribute("DATA", data);
-        
-        RequestDispatcher rd = request.getRequestDispatcher(result);
-        rd.forward(request, response);
         
         
-        try{
+        object_class_1_3 person2 = new object_class_1_3();
+            person2.firstName = "Naomi";
+            person2.lastName = "Saito";
+        
+        try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet FortuneTelling</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>"+"今日の運勢は。。。 " + lucklist[index]+"</h1>");
-            out.println("</body>");
-            out.println("</html>");
-          }finally{
-            out.close();
-     
+            out.println(person2.getFullName());
         }
     }
 
@@ -106,6 +82,5 @@ public class FortuneTelling extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
-
-}
+    }
+}// </editor-fold>

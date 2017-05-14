@@ -35,7 +35,6 @@
            
         %>
         <%
-            
             String[] prof = getSome(3110);
             
             out.print("名前: "+prof[1]+"<br>"+"生年月日: "+prof[2]+"<br>"+"住所: "+prof[3]);

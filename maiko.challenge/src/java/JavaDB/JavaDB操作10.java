@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mypackage.sample;
+package JavaDB;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,17 +11,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.sql.*;
 
-
-import java.util.Date;
-import java.util.Random;
-import javax.servlet.RequestDispatcher;
-import org.mypackage.sample.ResultData;
 /**
  *
  * @author maiko
  */
-public class FortuneTelling extends HttpServlet {
+public class JavaDB操作10 extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,37 +33,45 @@ public class FortuneTelling extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         
-        final String result = "/WEB-INF/jsp/FortuneTellingResult.jsp";
+        response.setCharacterEncoding("UTF-8");
         
-        String lucklist[]={"大吉","中吉","小吉","吉","半吉","末小吉","凶","小凶","半凶","末凶","大凶"};
-        Random rand = new Random();
-        Integer index = rand.nextInt(lucklist.length);
-        
-        ResultData data = new ResultData();
-        data.setD(new Date());
-        data.setLuck(lucklist[index]);
-        request.setAttribute("DATA", data);
-        
-        RequestDispatcher rd = request.getRequestDispatcher(result);
-        rd.forward(request, response);
+        Connection db10 = null;
+        PreparedStatement ps1 = null;
+        ResultSet rs1 = null;
         
         
-        try{
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet FortuneTelling</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>"+"今日の運勢は。。。 " + lucklist[index]+"</h1>");
-            out.println("</body>");
-            out.println("</html>");
-          }finally{
-            out.close();
-     
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            db10 = DriverManager.getConnection("jdbc:mysql://localhost:3306/Challenge_db", "maiko.saito", "muginoumi");
+            
+            String strid = request.getParameter("ID");
+            int id = Integer.parseInt(strid);
+            
+            ps1 = db10.prepareStatement("delete from profiles where profilesid=?");
+            ps1.setInt(1, id);
+            int rs2 = ps1.executeUpdate();  // 戻り値は"何行実行したか"。
+            
+            if(rs2>0){
+                out.print("正常に削除されました。");
+            } else {
+                out.print("そのID番号はありません。");
+            }
+           
+            ps1.close();
+            db10.close();
+            
+        
+        }catch (Exception e){
+            out.print("ERROR"+ e.toString());
+        }finally{
+            if(ps1 != null)
+                try{ db10.close();
+        } catch (Exception e2){
+                out.print("ERROR2"+ e2.getMessage());
+                }
         }
     }
+    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

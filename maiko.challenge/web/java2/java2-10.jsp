@@ -34,7 +34,8 @@
              i++;}
             if(i>0){
                 if(j>0){
-                    out.print("*");}
+                    out.print("*");
+                }
             j++;
             out.print(val+"^"+i);}}
         

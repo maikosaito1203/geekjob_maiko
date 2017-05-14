@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mypackage.sample;
+package JavaDB;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,17 +11,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.sql.*;
 
-
-import java.util.Date;
-import java.util.Random;
-import javax.servlet.RequestDispatcher;
-import org.mypackage.sample.ResultData;
 /**
  *
  * @author maiko
  */
-public class FortuneTelling extends HttpServlet {
+public class JavaDB13_goodsfind extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,37 +31,53 @@ public class FortuneTelling extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
         PrintWriter out = response.getWriter();
         
-        final String result = "/WEB-INF/jsp/FortuneTellingResult.jsp";
-        
-        String lucklist[]={"大吉","中吉","小吉","吉","半吉","末小吉","凶","小凶","半凶","末凶","大凶"};
-        Random rand = new Random();
-        Integer index = rand.nextInt(lucklist.length);
-        
-        ResultData data = new ResultData();
-        data.setD(new Date());
-        data.setLuck(lucklist[index]);
-        request.setAttribute("DATA", data);
-        
-        RequestDispatcher rd = request.getRequestDispatcher(result);
-        rd.forward(request, response);
+        Connection db13 = null;
+        PreparedStatement ps1 = null;
+        ResultSet rs1 = null;
         
         
         try{
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet FortuneTelling</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>"+"今日の運勢は。。。 " + lucklist[index]+"</h1>");
-            out.println("</body>");
-            out.println("</html>");
-          }finally{
-            out.close();
-     
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            db13 = DriverManager.getConnection("jdbc:mysql://localhost:3306/Challenge_db", "maiko.saito", "muginoumi");
+            
+            String goodsid = request.getParameter("goodsid");
+            String goodsname = request.getParameter("goodsname");
+            String price = request.getParameter("price");
+            
+            ps1 = db13.prepareStatement("select * from goods where goodsid=? or goodsname=? or price=?");
+            ps1.setString(1, goodsid);
+            ps1.setString(2, goodsname);
+            ps1.setString(3, price);
+            
+            rs1 = ps1.executeQuery();
+            
+            if(rs1.next()){
+                out.print("検索結果"+"<br>"+"<br>"+"商品ID："+rs1.getString("goodsid")+"<br>"+
+                        "商品名："+rs1.getString("goodsname")+"<br>"+"価格："+rs1.getString("price"));
+            } else { out.print("その商品はありません。"+"<br>"+"<br>");
+            }
+            out.print("<br>"+"<br>"+"<a href='/maiko.challenge/javaDB/JavaDB13_goodsfind.jsp'>商品検索画面へ</a>");
+            
+            rs1.close();
+            ps1.close();
+            db13.close();
+              
+        }catch(SQLException sql){
+            out.print("SQL ERROR"+sql.getSQLState());
+        }catch(Exception e){
+            out.print("ERROR"+e.toString());
+        }finally{
+            try{
+                if(rs1 != null)
+                    rs1.close();
+                } catch(Exception e2){
+                        out.print("ERROR 2"+e2.getMessage());
+                        }
+            
         }
     }
 
