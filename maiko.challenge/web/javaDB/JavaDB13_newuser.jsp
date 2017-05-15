@@ -12,7 +12,7 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <form action="/maiko.challenge/JavaDB__13_newuser" method="post">
+        <form action="/maiko.challenge/JavaDB13_newuser" method="post">
             <h1>＜ユーザー新規登録画面＞<br></h1>
             下記情報を入力してください。<br><br>
             ユーザーID：<input type="text" name="userid" maxlength="20"><br><br>
